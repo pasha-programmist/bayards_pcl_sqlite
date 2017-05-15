@@ -19,7 +19,6 @@ namespace BayardsSafetyApp.DBLoading
         List<Section> _sections;
         List<Media> _mediaList;
         string[] _langs = new string[] { "eng", "nl" };
-        //string databasePath = DependencyService.Get<ISQLite>().GetDatabasePath("bayards.db");
 
         private void UploadAll()
         {
@@ -50,24 +49,25 @@ namespace BayardsSafetyApp.DBLoading
                 //    }
 
                 //}
-                //var context = App.Database;
-                //context.SectionDatabase.DeleteAll<Section>();
-                //context.RiskDatabase.DeleteAll<Risk>();
-                //context.MediaDatabase.DeleteAll<Media>();
-                //context.SectionDatabase.InsertItems<Section>(_sections);
-                //context.RiskDatabase.InsertItems<Risk>(_risks);
-                //context.MediaDatabase.InsertItems<Media>(_mediaList);
-                Application.Current.Properties["AllSections"] = Utils.SerializeToJson(_sections);
-                Application.Current.Properties["AllRisks"] = Utils.SerializeToJson(_risks);
-                Application.Current.Properties["AllMedia"] = Utils.SerializeToJson(_mediaList);
-                try
-                {
-                    Application.Current.SavePropertiesAsync().Wait();
-                }
-                catch(Exception ex)
-                {
 
-                }
+                using (var context = App.Database.SectionDatabase)
+                    context.InsertItems(_sections);
+                using (var context = App.Database.RiskDatabase)
+                   context.InsertItems(_risks);
+                using (var context = App.Database.MediaDatabase)
+                    context.InsertItems(_mediaList);
+
+                //Application.Current.Properties["AllSections"] = Utils.SerializeToJson(_sections);
+                //Application.Current.Properties["AllRisks"] = Utils.SerializeToJson(_risks);
+                //Application.Current.Properties["AllMedia"] = Utils.SerializeToJson(_mediaList);
+                //try
+                //{
+                //    Application.Current.SavePropertiesAsync().Wait();
+                //}
+                //catch(Exception ex)
+                //{
+
+                //}
             }
             catch(Exception ex)
             {

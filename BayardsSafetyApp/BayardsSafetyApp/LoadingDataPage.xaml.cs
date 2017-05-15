@@ -34,9 +34,10 @@ namespace BayardsSafetyApp
             {
                 Application.Current.Properties["UpdateTime"] = DateTime.Now;
                 Application.Current.SavePropertiesAsync().Wait();
-                Cont.Contents = Utils.DeserializeFromJson<List<Section>>((string)Application.Current.Properties["AllSections"]).
-                   FindAll(s => s.Parent_s == "null"&&s.Lang == AppResources.LangResources.Language).OrderBy(s => s.Name).ToList();
-                //Cont.Contents = App.Database.SectionDatabase.GetItems<Section>().ToList();
+                // Cont.Contents = Utils.DeserializeFromJson<List<Section>>((string)Application.Current.Properties["AllSections"]).
+                //   FindAll(s => s.Parent_s == "null"&&s.Lang == AppResources.LangResources.Language).OrderBy(s => s.Name).ToList();
+                using (var context = App.Database.SectionDatabase)
+                    Cont.Contents = context.GetItems<Section>().ToList().FindAll(s => s.Parent_s == "null" && s.Lang == AppResources.LangResources.Language).OrderBy(s => s.Name).ToList();
                 
             }
                 
@@ -98,9 +99,14 @@ namespace BayardsSafetyApp
                 //    Cont.Contents = App.Database.SectionDatabase.GetItems<Section>().ToList().FindAll(s => s.Parent_s == "null"
                 //                                                                        && s.Lang == AppResources.LangResources.Language).
                 //                                                                        OrderBy(s => s.Name).ToList();
-                //}                    
-                Cont.Contents = Utils.DeserializeFromJson<List<Section>>((string)Application.Current.Properties["AllSections"]).
-                    FindAll(s => s.Parent_s == "null" && s.Lang == AppResources.LangResources.Language).OrderBy(s => s.Name).ToList();
+                //} 
+                using (var context = App.Database.SectionDatabase)
+                    Cont.Contents = context.GetItems<Section>().ToList().FindAll(s => s.Parent_s == "null"
+                                                                                       && s.Lang == AppResources.LangResources.Language).
+                                                                                       OrderBy(s => s.Name).ToList();
+                //Cont.Contents = Utils.DeserializeFromJson<List<Section>>((string)Application.Current.Properties["AllSections"]).
+                //    FindAll(s => s.Parent_s == "null" && s.Lang == AppResources.LangResources.Language).OrderBy(s => s.Name).ToList();
+
                 Navigation.PushAsync(Cont);
                 return false;
             }

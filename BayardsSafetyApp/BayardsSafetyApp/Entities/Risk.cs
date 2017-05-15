@@ -3,12 +3,12 @@ using SQLite;
 
 namespace BayardsSafetyApp.Entities
 {
-    [Table("Risks")]
+    [Table("risks")]
     public class Risk
     {
         [PrimaryKey, AutoIncrement, Column("_id")]
         public int _id { get; set; }
-        [Column("id_r"), Unique]
+        [Column("id_r")]
         public string Id_r { get; set; }
         [Column("content")]
         public string Content { get; set; }

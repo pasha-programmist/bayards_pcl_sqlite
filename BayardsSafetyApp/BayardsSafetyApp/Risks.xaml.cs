@@ -60,13 +60,15 @@ namespace BayardsSafetyApp
                     {
                         foreach (var r in _contents.Risks)
                         {
+                            List<string> med;
                             var rToDisp = r;
-                            //var med = App.Database.MediaDatabase.GetItems<Media>().ToList().FindAll(m => m.Id_r == r.Id_r && 
+                            using ( var context = App.Database.MediaDatabase)
+                                med = context.GetItems<Media>().ToList().FindAll(m => m.Id_r == r.Id_r &&
+                                                                                                   m.Lang == AppResources.LangResources.Language).ToList().
+                                                                                                     Select(m => m.Url).ToList();
+                            //var med = Utils.DeserializeFromJson<List<Media>>((string)Application.Current.Properties["AllMedia"]).FindAll(m => m.Id_r == r.Id_r &&
                             //                                                                   m.Lang == AppResources.LangResources.Language).ToList().
-                            //                                                                       Select(m => m.Url).ToList();
-                            var med = Utils.DeserializeFromJson<List<Media>>((string)Application.Current.Properties["AllMedia"]).FindAll(m => m.Id_r == r.Id_r &&
-                                                                                               m.Lang == AppResources.LangResources.Language).ToList().
-                                                                                                   Select(m => m.Url).ToList();
+                            //                                                                      Select(m => m.Url).ToList();
                             rToDisp.Media = med;
                             _risks.Add(new RiskDetails(rToDisp));
                         }
@@ -91,16 +93,17 @@ namespace BayardsSafetyApp
             {
                 try
                 {
+                    List<Risk> d_risks;
                     //Contents = api.getSectionContent(_sId, AppResources.LangResources.Language).Result;
-                    //var d_risks = App.Database.RiskDatabase.GetItems<Risk>().ToList().FindAll(r => r.Parent_s == _sId
+                    using (var context = App.Database.RiskDatabase)
+                        d_risks = context.GetItems<Risk>().ToList().FindAll(r => r.Parent_s == _sId && r.Lang == AppResources.LangResources.Language).ToList();
+                    //var d_risks = Utils.DeserializeFromJson<List<Risk>>((string)Application.Current.Properties["AllRisks"]).FindAll(r => r.Parent_s == _sId
                     //                                                                    && r.Lang == AppResources.LangResources.Language).ToList();
-                    var d_risks = Utils.DeserializeFromJson<List<Risk>>((string)Application.Current.Properties["AllRisks"]).FindAll(r => r.Parent_s == _sId
-                                                                                        && r.Lang == AppResources.LangResources.Language).ToList();
                     if (d_risks != null)
                         Contents.Risks = d_risks.OrderBy(r => r.Name).ToList();
                         
 
-                    var d_sects = Utils.DeserializeFromJson<List<Section>>((string)Application.Current.Properties["AllSections"]).FindAll(s => s.Parent_s == _sId
+                    var d_sects = App.Database.SectionDatabase.GetItems<Section>().ToList().FindAll(s => s.Parent_s == _sId
                                                                                         && s.Lang == AppResources.LangResources.Language).ToList();
                     if (d_sects != null)
                         Contents.Subsections = d_sects.OrderBy(r => r.Name).ToList();

@@ -2,7 +2,7 @@
 
 namespace BayardsSafetyApp.Entities
 {
-    [Table("Media")]
+    [Table("media")]
     public class Media
     {
         [PrimaryKey, AutoIncrement, Column("_id")]

@@ -30,7 +30,6 @@ namespace BayardsSafetyApp
         }
         private string GetCurrentDb(string type)
         {
-
             switch (type)
             {
                 case "Section":
@@ -44,8 +43,7 @@ namespace BayardsSafetyApp
             }
         }
         public bool IsEmpty<T>() where T : new()
-        {
-            context = new SQLiteConnection(GetCurrentDb(typeof(T).Name));            
+        {          
             return context.Table<T>().Count() == 0;
         }
         public IEnumerable<T> GetItems<T>() where T : new()
@@ -65,7 +63,7 @@ namespace BayardsSafetyApp
         }
         public int DeleteAll<T> ()
         {
-            context = new SQLiteConnection(GetCurrentDb(typeof(T).Name));
+            
             return context.DeleteAll<T>();
         }
 
@@ -81,7 +79,8 @@ namespace BayardsSafetyApp
         public int InsertItems<T>(List<T> items)
         {
             context = new SQLiteConnection(GetCurrentDb(typeof(T).Name));
-                return context.InsertAll(items);
+            context.DeleteAll<T>();
+            return context.InsertAll(items);
         }
 
         #region DisposeRegion
@@ -92,6 +91,7 @@ namespace BayardsSafetyApp
             {
                 if (disposing)
                 {
+                    context.Close();
                     context.Dispose();
                 }
             }
